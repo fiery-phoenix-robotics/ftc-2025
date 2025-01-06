@@ -72,19 +72,28 @@ public class ThreadedTeleOp extends LinearOpMode {
                     catch (InterruptedException e) {
                         
                     }
+                    intake.setPower(0.0);
             }
         },
         SCORE_HIGH_BASKET {
             public void run () {
+                    moveWristTo(200, 1.0);
                     moveArmTo(3765, 1.0);
                     moveWristTo(555, 1.0);
-                    intake.setPower(-3.0);
                     try {
                         Thread.sleep(3000);
                     }
                     catch (InterruptedException e) {
                         
                     }
+                    intake.setPower(-1.0);
+                    try {
+                        Thread.sleep(3000);
+                    }
+                    catch (InterruptedException e) {
+                        
+                    }
+                    intake.setPower(0.0);
             }
         },
         SCORE_SPECIMEN_HIGH {
@@ -139,8 +148,8 @@ public class ThreadedTeleOp extends LinearOpMode {
         },
         MANUAL_RAISE_LEVER {
             public void run() {
-                targetLever++;
-                leverPower = 0.5;
+                targetLever += 2;
+                leverPower = 1.0;
                 
                 lever.setTargetPosition(targetLever);
                 lever.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -149,7 +158,7 @@ public class ThreadedTeleOp extends LinearOpMode {
         },
         MANUAL_LOWER_LEVER {
             public void run() {
-                targetLever--;
+                targetLever -= 2;
                 leverPower = 0.5;
                 
                 lever.setTargetPosition(targetLever);
@@ -178,33 +187,16 @@ public class ThreadedTeleOp extends LinearOpMode {
         MANUAL_INTAKE {
             public void run() {
                     intake.setPower(1.0);
-                    try {
-                        Thread.sleep(1000);
-                    }
-                    catch (InterruptedException e) {
-                        
-                    }
             }
         },
         MANUAL_OUTTAKE {
             public void run() {
                     intake.setPower(-1.0);
-                    /*try {
-                        Thread.sleep(1000);
-                    }
-                    catch (InterruptedException e) {
-                        
-                    }*/
             }
         },
         IDLE {
             public void run () {
-                    try {
-                        Thread.sleep(1);
-                    }
-                    catch (InterruptedException e) {
-                        
-                    }
+                    intake.setPower(0);
             }
         };
     }
@@ -430,7 +422,7 @@ public class ThreadedTeleOp extends LinearOpMode {
                     case "left_trigger": {
                         lastTowerAction = TowerAction.MANUAL_OUTTAKE;
                     }
-                    break; 
+                    break;
                     default: {
                         lastTowerAction = TowerAction.IDLE;
                     }
@@ -456,6 +448,14 @@ public class ThreadedTeleOp extends LinearOpMode {
                 lastDrivetrainAction = DrivetrainAction.IDLE;
             }
             lastDrivetrainAction.run();
+            
+            if (gamepad1.left_bumper || gamepad1.right_bumper) {
+                lastClawAction = ClawAction.OPEN;
+            }
+            else {
+                lastClawAction = ClawAction.CLOSE;
+            }
+            lastClawAction.run();
             
             telemetry.addData("Last Drivetrain Action", lastDrivetrainAction.name());
             telemetry.addData("Last Tower Action", lastTowerAction.name());
@@ -488,7 +488,7 @@ public class ThreadedTeleOp extends LinearOpMode {
     
     public static void setClaw (boolean open) {
         if (open) {
-            claw.setPosition(0.5);
+            claw.setPosition(0.35);
         }
         else {
             claw.setPosition(1.0);
