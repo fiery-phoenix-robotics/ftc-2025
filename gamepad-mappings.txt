@@ -1,5 +1,28 @@
 gamepad 1:
 
+LEFT JOYSTICK = manual move arm (up, down)
+RIGHT JOYSTICK = manual move wrist (up, down)
+
+LEFT TRIGGER = manual outtake
+RIGHT TRIGGER = manual intake
+LEFT BUMPER = open claw
+RIGHT BUMPER = open claw
+
+A = intake from submersible
+B = arm, wrist, lever go to home position
+X = score in high basket
+Y = score on high chamber
+
+DPAD UP = manual raise lever
+DPAD DOWN = manual lower lever
+DPAD LEFT = (none)
+DPAD RIGHT = (none)
+
+BACK = grab specimen from wall
+START = ascend to level two
 
 gamepad 2:
+
+LEFT JOYSTICK = drive
+RIGHT JOYSTUICK = turn
 
