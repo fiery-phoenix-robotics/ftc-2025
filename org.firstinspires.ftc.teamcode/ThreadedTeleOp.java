@@ -258,9 +258,13 @@ public class ThreadedTeleOp extends LinearOpMode {
         }
     }
     
-    private TowerAction lastTowerAction = TowerAction.IDLE;
+    private TowerAction lastTowerAction = TowerAction.INIT;
     private DrivetrainAction lastDrivetrainAction = DrivetrainAction.IDLE;
     private ClawAction lastClawAction = ClawAction.CLOSE;
+        
+    Thread towerThread = new Thread(lastTowerAction);
+    Thread drivetrainThread = new Thread(lastDrivetrainAction):
+    Thread clawThread = new Thread(lastClawAction);
     
     @Override
     public void runOpMode () {
@@ -311,12 +315,14 @@ public class ThreadedTeleOp extends LinearOpMode {
         
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
-        
-        lastTowerAction = TowerAction.INIT;
-        lastTowerAction.run();
-        
-        lastClawAction = ClawAction.CLOSE;
-        lastClawAction.run();
+
+        towerThread = new Thread(lastTowerAction);
+        drivetrainThread = new Thread(lastDrivetrainAction):
+        clawThread = new Thread(lastClawAction);
+
+        towerThread.start();
+        drivetrainThread.start();
+        clawThread.start();
         
         String lastButtonPressed = "";
         String thisButtonPressed = "";
@@ -374,6 +380,9 @@ public class ThreadedTeleOp extends LinearOpMode {
             
             // make sure an action only runs once per button press
             if (!lastButtonPressed.equals(thisButtonPressed)) {
+                if (!thisButtonPressed.equals("")) {
+                    towerThread.interrupt();
+                }
                 switch (thisButtonPressed) {
                     case "a": {
                         lastTowerAction = TowerAction.INTAKE_FLOOR;
@@ -442,17 +451,29 @@ public class ThreadedTeleOp extends LinearOpMode {
             
             // if any joystick is being used, set the drivetrain action to drive else idle
             if (x != 0.0 || y != 0.0 || rx != 0.0) {
+                if (lastDriveTrainAction != DrivetrainAction.DRIVE) {
+                    drivetrainThread.interrupt();
+                }
                 lastDrivetrainAction = DrivetrainAction.DRIVE;
             }
             else {
+                if (lastDriveTrainAction != DrivetrainAction.IDLE) {
+                    drivetrainThread.interrupt();
+                }
                 lastDrivetrainAction = DrivetrainAction.IDLE;
             }
             lastDrivetrainAction.run();
             
             if (gamepad1.left_bumper || gamepad1.right_bumper) {
+                if (lastClawAction != ClawAction.OPEN) {
+                    clawThread.interrupt():
+                }
                 lastClawAction = ClawAction.OPEN;
             }
             else {
+                if (lastClawAction != ClawAction.CLOSE) {
+                    clawThread.interrupt():
+                }
                 lastClawAction = ClawAction.CLOSE;
             }
             lastClawAction.run();
@@ -472,6 +493,14 @@ public class ThreadedTeleOp extends LinearOpMode {
             telemetry.addData("Target Wrist", targetWrist);
             telemetry.addData("Target Lever", targetLever);
             telemetry.update();
+
+            towerThread = new Thread(lastTowerAction);
+            drivetrainThread = new Thread(lastDrivetrainAction):
+            clawThread = new Thread(lastClawAction);
+
+            towerThread.start();
+            drivetrainThread.start();
+            clawThread.start();
             
         }
     }
