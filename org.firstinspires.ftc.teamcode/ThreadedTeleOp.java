@@ -56,15 +56,15 @@ public class ThreadedTeleOp extends LinearOpMode {
         // MANUAL_INTAKE, MANUAL_OUTTAKE, TOGGLE_CLAW
         INIT {
             public void run() {
-                    moveWristTo(0, 1.0);
-                    moveArmTo(0, 1.0);
+                    moveWristTo(0, 0.5);
+                    moveArmTo(0, 0.5);
                     moveLeverTo(0, 0.5);
             }
         },
         INTAKE_FLOOR {
             public void run () {
-                    moveArmTo(1000, 1.0);
-                    moveWristTo(500, 1.0);
+                    moveArmTo(1000);
+                    moveWristTo(500);
                     intake.setPower(1.0);
                     try {
                         Thread.sleep(3000);
@@ -77,9 +77,9 @@ public class ThreadedTeleOp extends LinearOpMode {
         },
         SCORE_HIGH_BASKET {
             public void run () {
-                    moveWristTo(200, 1.0);
-                    moveArmTo(3765, 1.0);
-                    moveWristTo(555, 1.0);
+                    moveWristTo(200);
+                    moveArmTo(3765);
+                    moveWristTo(555);
                     try {
                         Thread.sleep(3000);
                     }
@@ -98,14 +98,14 @@ public class ThreadedTeleOp extends LinearOpMode {
         },
         SCORE_SPECIMEN_HIGH {
             public void run() {
-                    moveWristTo(0, 1.0);
-                    moveLeverTo(290, 0.75);
+                    moveWristTo(0);
+                    moveLeverTo(290);
             }
         },
         GRAB_SPECIMEN_WALL {
             public void run() {
                 setClaw(true);
-                moveLeverTo(290, 0.75);
+                moveLeverTo(290);
                 try {
                     Thread.sleep(3000);
                 }
@@ -117,15 +117,15 @@ public class ThreadedTeleOp extends LinearOpMode {
         },
         ASCEND_LEVEL_TWO {
             public void run() {
-                    moveWristTo(0, 1.0);
-                    moveArmTo(2500, 1.0);
+                    moveWristTo(0);
+                    moveArmTo(2500);
                     try {
                         Thread.sleep(2000);
                     }
                     catch (InterruptedException e) {
                         
                     }
-                    moveArmTo(0, 1.0);
+                    moveArmTo(0);
             }
         },
         MANUAL_MOVE_ARM {
@@ -516,6 +516,27 @@ public class ThreadedTeleOp extends LinearOpMode {
             
         }
     }
+
+    public static void moveArmTo (int pos) {
+        targetArm = pos;
+        armPower = 1.0;
+        
+        arm.setTargetPosition(targetArm);
+        arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        arm.setPower(armPower);
+        
+        if (targetArm > 3765) {
+            targetArm = 3765;
+        }
+        else if (targetArm < 0) {
+            targetArm = 0;
+        }
+        
+        while (arm.isBusy() &&
+        !(pos - armMarginOfError < arm.getCurrentPosition() && arm.getCurrentPosition() < pos + armMarginOfError)) {
+            
+        }
+    }
     
     public static void moveWristTo (int pos, double power) {
         targetWrist = pos;
@@ -536,10 +557,50 @@ public class ThreadedTeleOp extends LinearOpMode {
             
         }
     }
+
+    public static void moveWristTo (int pos) {
+        targetWrist = pos;
+        wristPower = 0.75;
+        
+        wrist.setTargetPosition(targetWrist);
+        wrist.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        wrist.setPower(wristPower);
+        
+        if (targetWrist > 600) {
+            targetWrist = 600;
+        }
+        else if (targetArm < 0) {
+            targetWrist = 0;
+        }
+        
+        while (wrist.isBusy() && !(pos - wristMarginOfError < wrist.getCurrentPosition() && wrist.getCurrentPosition() < pos + wristMarginOfError)) {
+            
+        }
+    }
     
     public static void moveLeverTo (int pos, double power) {
         targetLever = pos;
         leverPower = power;
+        
+        lever.setTargetPosition(targetLever);
+        lever.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        lever.setPower(leverPower);
+        
+        if (targetLever > 600) {
+            targetLever = 600;
+        }
+        else if (targetLever < 0) {
+            targetLever = 0;
+        }
+        
+        while (lever.isBusy() && !(pos - leverMarginOfError < lever.getCurrentPosition() && lever.getCurrentPosition() < pos + leverMarginOfError)) {
+            
+        }
+    }
+    
+    public static void moveLeverTo (int pos) {
+        targetLever = pos;
+        leverPower = 0.75;
         
         lever.setTargetPosition(targetLever);
         lever.setMode(DcMotor.RunMode.RUN_TO_POSITION);
