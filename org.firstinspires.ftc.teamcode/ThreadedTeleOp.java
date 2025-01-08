@@ -61,11 +61,11 @@ public class ThreadedTeleOp extends LinearOpMode {
                     moveLeverTo(0, 0.5);
             }
         },
-        INTAKE_FLOOR {
+        GO_TO_INTAKE {
             public void run () {
-                    moveArmTo(1000);
-                    moveWristTo(500);
-                    intake.setPower(1.0);
+                    moveArmTo(0);
+                    moveWristTo(980);
+                    intake.setPower(-1.0);
                     try {
                         Thread.sleep(3000);
                     }
@@ -78,15 +78,15 @@ public class ThreadedTeleOp extends LinearOpMode {
         SCORE_HIGH_BASKET {
             public void run () {
                     moveWristTo(200);
-                    moveArmTo(3765);
-                    moveWristTo(555);
+                    moveArmTo(3690);
+                    moveWristTo(1800);
                     try {
                         Thread.sleep(3000);
                     }
                     catch (InterruptedException e) {
                         
                     }
-                    intake.setPower(-1.0);
+                    intake.setPower(1.0);
                     try {
                         Thread.sleep(3000);
                     }
@@ -99,13 +99,13 @@ public class ThreadedTeleOp extends LinearOpMode {
         SCORE_SPECIMEN_HIGH {
             public void run() {
                     moveWristTo(0);
-                    moveLeverTo(290);
+                    moveLeverTo(290, 1.0);
             }
         },
         GRAB_SPECIMEN_WALL {
             public void run() {
                 setClaw(true);
-                moveLeverTo(290);
+                moveLeverTo(45);
                 try {
                     Thread.sleep(3000);
                 }
@@ -113,6 +113,11 @@ public class ThreadedTeleOp extends LinearOpMode {
                     
                 }
                 setClaw(false);
+            }
+        },
+        BEFORE_SPECIMEN_HIGH {
+            public void run() {
+                moveLeverTo(465);
             }
         },
         ASCEND_LEVEL_TWO {
@@ -168,12 +173,12 @@ public class ThreadedTeleOp extends LinearOpMode {
         },
         MANUAL_MOVE_WRIST {
             public void run() {
-                if (0 < wrist.getCurrentPosition() + moveWristBy && wrist.getCurrentPosition() + moveWristBy < 600) {
+                if (0 < wrist.getCurrentPosition() + moveWristBy && wrist.getCurrentPosition() + moveWristBy < 2000) {
                     targetWrist += moveWristBy;
                 } else if (wrist.getCurrentPosition() < 0){
                     targetWrist = 0;
-                } else if (wrist.getCurrentPosition() > 600) {
-                    targetWrist = 600;
+                } else if (wrist.getCurrentPosition() > 2000) {
+                    targetWrist = 2000;
                 } else {
                     return;
                 }
@@ -186,12 +191,12 @@ public class ThreadedTeleOp extends LinearOpMode {
         },
         MANUAL_INTAKE {
             public void run() {
-                    intake.setPower(1.0);
+                    intake.setPower(-1.0);
             }
         },
         MANUAL_OUTTAKE {
             public void run() {
-                    intake.setPower(-1.0);
+                    intake.setPower(1.0);
             }
         },
         IDLE {
@@ -263,7 +268,7 @@ public class ThreadedTeleOp extends LinearOpMode {
     private ClawAction lastClawAction = ClawAction.CLOSE;
         
     Thread towerThread = new Thread(lastTowerAction);
-    Thread drivetrainThread = new Thread(lastDrivetrainAction):
+    Thread drivetrainThread = new Thread(lastDrivetrainAction);
     Thread clawThread = new Thread(lastClawAction);
     
     @Override
@@ -317,7 +322,7 @@ public class ThreadedTeleOp extends LinearOpMode {
         waitForStart();
 
         towerThread = new Thread(lastTowerAction);
-        drivetrainThread = new Thread(lastDrivetrainAction):
+        drivetrainThread = new Thread(lastDrivetrainAction);
         clawThread = new Thread(lastClawAction);
 
         towerThread.start();
@@ -365,6 +370,9 @@ public class ThreadedTeleOp extends LinearOpMode {
             else if (gamepad1.start) {
                 thisButtonPressed = "start";
             }
+            else if (gamepad1.guide) {
+                thisButtonPressed = "guide";
+            }
             else if (gamepad1.right_trigger != 0.0) {
                 thisButtonPressed = "right_trigger";
             }
@@ -385,7 +393,7 @@ public class ThreadedTeleOp extends LinearOpMode {
                 }
                 switch (thisButtonPressed) {
                     case "a": {
-                        lastTowerAction = TowerAction.INTAKE_FLOOR;
+                        lastTowerAction = TowerAction.GO_TO_INTAKE;
                     }
                     break;
                     case "b": {
@@ -398,10 +406,6 @@ public class ThreadedTeleOp extends LinearOpMode {
                     break;
                     case "y": {
                         lastTowerAction = TowerAction.SCORE_SPECIMEN_HIGH;
-                    }
-                    break;
-                    case "back": {
-                        lastTowerAction = TowerAction.GRAB_SPECIMEN_WALL;
                     }
                     break;
                     case "left_stick_y": {
@@ -418,6 +422,14 @@ public class ThreadedTeleOp extends LinearOpMode {
                     break;
                     case "dpad_down": {
                         lastTowerAction = TowerAction.MANUAL_LOWER_LEVER;
+                    }
+                    break;
+                    case "dpad_left": {
+                        lastTowerAction = TowerAction.BEFORE_SPECIMEN_HIGH;
+                    }
+                    break;
+                    case "dpad_right": {
+                        lastTowerAction = TowerAction.GRAB_SPECIMEN_WALL;
                     }
                     break;
                     case "start": {
@@ -451,13 +463,13 @@ public class ThreadedTeleOp extends LinearOpMode {
             
             // if any joystick is being used, set the drivetrain action to drive else idle
             if (x != 0.0 || y != 0.0 || rx != 0.0) {
-                if (lastDriveTrainAction != DrivetrainAction.DRIVE) {
+                if (lastDrivetrainAction != DrivetrainAction.DRIVE) {
                     drivetrainThread.interrupt();
                 }
                 lastDrivetrainAction = DrivetrainAction.DRIVE;
             }
             else {
-                if (lastDriveTrainAction != DrivetrainAction.IDLE) {
+                if (lastDrivetrainAction != DrivetrainAction.IDLE) {
                     drivetrainThread.interrupt();
                 }
                 lastDrivetrainAction = DrivetrainAction.IDLE;
@@ -466,13 +478,13 @@ public class ThreadedTeleOp extends LinearOpMode {
             
             if (gamepad1.left_bumper || gamepad1.right_bumper) {
                 if (lastClawAction != ClawAction.OPEN) {
-                    clawThread.interrupt():
+                    clawThread.interrupt();
                 }
                 lastClawAction = ClawAction.OPEN;
             }
             else {
                 if (lastClawAction != ClawAction.CLOSE) {
-                    clawThread.interrupt():
+                    clawThread.interrupt();
                 }
                 lastClawAction = ClawAction.CLOSE;
             }
@@ -495,7 +507,7 @@ public class ThreadedTeleOp extends LinearOpMode {
             telemetry.update();
 
             towerThread = new Thread(lastTowerAction);
-            drivetrainThread = new Thread(lastDrivetrainAction):
+            drivetrainThread = new Thread(lastDrivetrainAction);
             clawThread = new Thread(lastClawAction);
 
             towerThread.start();
@@ -575,8 +587,8 @@ public class ThreadedTeleOp extends LinearOpMode {
         wrist.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         wrist.setPower(wristPower);
         
-        if (targetWrist > 600) {
-            targetWrist = 600;
+        if (targetWrist > 2000) {
+            targetWrist = 2000;
         }
         else if (targetArm < 0) {
             targetWrist = 0;
@@ -595,8 +607,8 @@ public class ThreadedTeleOp extends LinearOpMode {
         wrist.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         wrist.setPower(wristPower);
         
-        if (targetWrist > 600) {
-            targetWrist = 600;
+        if (targetWrist > 2000) {
+            targetWrist = 2000;
         }
         else if (targetArm < 0) {
             targetWrist = 0;
