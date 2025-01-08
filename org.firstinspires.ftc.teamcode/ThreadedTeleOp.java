@@ -12,7 +12,7 @@ import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.util.Range;
 import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
 
-@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name="ThreadedTeleOp_DRAFT", group="Competition")
+@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name="ThreadedTeleOp_BUILDTEST", group="Competition")
 public class ThreadedTeleOp extends LinearOpMode {
     
     private static DcMotor leftDriveFront = null;
@@ -80,39 +80,18 @@ public class ThreadedTeleOp extends LinearOpMode {
                     moveWristTo(200);
                     moveArmTo(3690);
                     moveWristTo(1800);
-                    try {
-                        Thread.sleep(3000);
-                    }
-                    catch (InterruptedException e) {
-                        
-                    }
-                    intake.setPower(1.0);
-                    try {
-                        Thread.sleep(3000);
-                    }
-                    catch (InterruptedException e) {
-                        
-                    }
-                    intake.setPower(0.0);
             }
         },
         SCORE_SPECIMEN_HIGH {
             public void run() {
                     moveWristTo(0);
-                    moveLeverTo(290, 1.0);
+                    moveLeverTo(260, 1.0);
             }
         },
         GRAB_SPECIMEN_WALL {
             public void run() {
                 setClaw(true);
                 moveLeverTo(45);
-                try {
-                    Thread.sleep(3000);
-                }
-                catch (InterruptedException e) {
-                    
-                }
-                setClaw(false);
             }
         },
         BEFORE_SPECIMEN_HIGH {
@@ -266,10 +245,6 @@ public class ThreadedTeleOp extends LinearOpMode {
     private TowerAction lastTowerAction = TowerAction.INIT;
     private DrivetrainAction lastDrivetrainAction = DrivetrainAction.IDLE;
     private ClawAction lastClawAction = ClawAction.CLOSE;
-        
-    Thread towerThread = new Thread(lastTowerAction);
-    Thread drivetrainThread = new Thread(lastDrivetrainAction);
-    Thread clawThread = new Thread(lastClawAction);
     
     @Override
     public void runOpMode () {
@@ -320,19 +295,19 @@ public class ThreadedTeleOp extends LinearOpMode {
         
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
-
-        towerThread = new Thread(lastTowerAction);
-        drivetrainThread = new Thread(lastDrivetrainAction);
-        clawThread = new Thread(lastClawAction);
-
-        towerThread.start();
-        drivetrainThread.start();
-        clawThread.start();
         
         String lastButtonPressed = "";
         String thisButtonPressed = "";
         
         while (opModeIsActive()) {
+
+            Thread towerThread = new Thread(lastTowerAction);
+            Thread drivetrainThread = new Thread(lastDrivetrainAction);
+            Thread clawThread = new Thread(lastClawAction);
+
+            towerThread.start();
+            drivetrainThread.start();
+            clawThread.start();
             
             if (gamepad1.a) {
                 thisButtonPressed = "a";
@@ -505,14 +480,6 @@ public class ThreadedTeleOp extends LinearOpMode {
             telemetry.addData("Target Wrist", targetWrist);
             telemetry.addData("Target Lever", targetLever);
             telemetry.update();
-
-            towerThread = new Thread(lastTowerAction);
-            drivetrainThread = new Thread(lastDrivetrainAction);
-            clawThread = new Thread(lastClawAction);
-
-            towerThread.start();
-            drivetrainThread.start();
-            clawThread.start();
             
         }
     }
@@ -601,7 +568,7 @@ public class ThreadedTeleOp extends LinearOpMode {
 
     public static void moveWristTo (int pos) {
         targetWrist = pos;
-        wristPower = 0.75;
+        wristPower = 1.0;
         
         wrist.setTargetPosition(targetWrist);
         wrist.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -641,7 +608,7 @@ public class ThreadedTeleOp extends LinearOpMode {
     
     public static void moveLeverTo (int pos) {
         targetLever = pos;
-        leverPower = 0.75;
+        leverPower = 1.0;
         
         lever.setTargetPosition(targetLever);
         lever.setMode(DcMotor.RunMode.RUN_TO_POSITION);
