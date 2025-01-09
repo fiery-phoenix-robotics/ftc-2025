@@ -431,9 +431,8 @@ public class ThreadedTeleOp extends LinearOpMode {
             
             lastButtonPressed = thisButtonPressed;
             
-            // DRIVE Split Arcade
             y = -gamepad2.left_stick_y; // Remember, Y stick value is reversed!
-            x = gamepad2.left_stick_x * 1.1; // Counteract imperfect strafing
+            x = gamepad2.left_stick_x * 1.1; // 1.1 counteracts the effects of strafing and traction
             rx = gamepad2.right_stick_x;
             
             // if any joystick is being used, set the drivetrain action to drive else idle
