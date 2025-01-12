@@ -1,0 +1,22 @@
+gamepad1:
+    X = high_basket
+    Y = specimen_high
+    A = intake_floor
+    B = home
+    
+    Left Bumper = intake_submersible
+    Right Bumper = <none>
+    Left Trigger = intake out
+    Right Trigger = intake in
+    
+    (D-Pad) Up = arm up
+    (D-Pad) Down = arm down
+    (D-Pad) Left = wrist down
+    (D-Pad) Right = wrist up
+    
+    Start = hang_l2
+    Back = specimen_wall
+    
+gamepad2:
+    Left Joystick = drive
+    Right Joystick = rotate
