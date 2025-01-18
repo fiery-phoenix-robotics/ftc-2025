@@ -88,10 +88,10 @@ public class Drivetrain extends Subsystem {
 
                 double northeastPower; // power of northeastwardly-moving motors (front right and back left)
                 double northwestPower; // power of northwestwardly-moving motors (front left and back right)
-                double e = 4; // acceptable error
+                double e = 4.0; // acceptable error
 
                 // responsively adjust position 
-                while (opModeIsActive() && !(FieryMath.withinRange(pos.x, {x - e, x + e}) && FieryMath.withinRange(pos.y, {y - e, y + e}))) {
+                while (opModeIsActive() && !(FieryMath.withinRange(pos.x, x - e, x + e) && FieryMath.withinRange(pos.y, y - e, y + e))) {
                     pos = otis.getPosition();
                     current_x = pos.x;
                     current_y = pos.y;
@@ -124,7 +124,41 @@ public class Drivetrain extends Subsystem {
             }
         }
         public boolean turnTo (double theta) {
-            
+            leftDriveFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            rightDriveFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            leftDriveRear.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            rightDriveRear.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+            double leftPower;
+            double rightPower;
+            double e = 4.0; // acceptable error
+
+            // responsively adjust position 
+            while (opModeIsActive() && !FieryMath.withinRange(pos.h, h - e, h + e)) {
+                pos = otis.getPosition();
+                current_h = pos.h;
+
+                double delta_h = -(current_h - theta);
+
+                // accomodate for negative and positive angles with abs. val. greater than 180
+                if (Math.abs(delta_h) > 180) {
+                    delta_h = Math.signum(delta_h) * (Math.abs(delta_h) - 180);
+                }
+
+                leftPower = delta_h / 180;
+                rightPower = -delta_h / 180;
+
+                leftDriveFront.setPower(leftPower);
+                rightDriveFront.setPower(rightPower);
+                leftDriveRear.setPower(leftPower);
+                rightDriveRear.setPower(rightPower);
+            }
+
+            // set motor power back to 0
+            leftDriveFront.setPower(0);
+            rightDriveFront.setPower(0);
+            leftDriveRear.setPower(0);
+            rightDriveRear.setPower(0);
         }
         private void configureOtos() {
 
