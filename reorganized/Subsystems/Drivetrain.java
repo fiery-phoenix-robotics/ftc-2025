@@ -1,7 +1,88 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
+
+import org.firstinspires.ftc.teamcode.MathSupplemental;
+
 public class Drivetrain extends Subsystem {
     public Drivetrain () {
+        
+    }
+
+    public void init () {
+        configureOtos();
+    }
+
+    // returns whether it was successfully able to move to its desired position
+    public boolean goTo (double x, double y) {
+
+        SparkFunOTOS.Pose2D pos = otis.getPosition();
+        double current_x = pos.x;
+        double current_y = pos.y;
+        
+        double delta_x = x - current_x;
+        double delta_y = y - current_y;
+
+            
+        if (opModeIsActive()) {
+            leftDriveFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            rightDriveFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            leftDriveRear.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            rightDriveRear.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+            double northeastPower; // power of northeastwardly-moving motors (front right and back left)
+            double northwestPower; // power of northwestwardly-moving motors (front left and back right)
+            double e = 4; // acceptable error
+
+            // responsively adjust position 
+            while (opModeIsActive() && !(MathSupplemental.withinRange(pos.x, {x - e, x + e}) && MathSupplemental.withinRange(pos.y, {y - e, y + e}))) {
+                pos = otis.getPosition();
+                current_x = pos.x;
+                current_y = pos.y;
+
+                delta_x = x - current_x;
+                delta_y = y - current_y;
+
+                double northeast = delta_y + delta_x;
+                double northwest = delta_y - delta_x;
+
+                if (Math.abs(northeast) > Math.abs(northwest)) {
+                    northeastPower = northeast * (power / Math.abs(northeast));
+                    northwestPower = northwest * (power / Math.abs(northeast));
+                } else {
+                    northeastPower = northwest * (power / Math.abs(northwest));
+                    northwestPower = northeast * (power / Math.abs(northwest));
+                }
+
+                leftDriveFront.setPower(northwestPower);
+                rightDriveFront.setPower(northeastPower);
+                leftDriveRear.setPower(northeastPower);
+                rightDriveRear.setPower(northwestPower);
+            }
+
+            // set motor power back to 0
+            leftDriveFront.setPower(0);
+            rightDriveFront.setPower(0);
+            leftDriveRear.setPower(0);
+            rightDriveRear.setPower(0);
+        }
+    }
+    
+    private void configureOtos() {
+
+        otis.setLinearUnit(DistanceUnit.INCH);
+        otis.setAngularUnit(AngleUnit.DEGREES);
+        // define how far the sensor is offset from the tracking point of the robot
+        SparkFunOTOS.Pose2D offset = new SparkFunOTOS.Pose2D(0, 0, 0);
+        otis.setOffset(offset);
+        otis.setLinearScalar(1.0);
+        otis.setAngularScalar(1.0);
+        otis.calibrateImu();
+        otis.resetTracking();
+        SparkFunOTOS.Pose2D currentPosition = new SparkFunOTOS.Pose2D(0, 0, 0);
+        otis.setPosition(currentPosition);
 
     }
 }
