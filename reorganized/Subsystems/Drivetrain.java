@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
 
-import org.firstinspires.ftc.teamcode.MathSupplemental;
+import org.firstinspires.ftc.teamcode.FieryMath;
 
 public class Drivetrain extends Subsystem {
     public Drivetrain () {
@@ -37,7 +37,7 @@ public class Drivetrain extends Subsystem {
             double e = 4; // acceptable error
 
             // responsively adjust position 
-            while (opModeIsActive() && !(MathSupplemental.withinRange(pos.x, {x - e, x + e}) && MathSupplemental.withinRange(pos.y, {y - e, y + e}))) {
+            while (opModeIsActive() && !(FieryMath.withinRange(pos.x, {x - e, x + e}) && FieryMath.withinRange(pos.y, {y - e, y + e}))) {
                 pos = otis.getPosition();
                 current_x = pos.x;
                 current_y = pos.y;
