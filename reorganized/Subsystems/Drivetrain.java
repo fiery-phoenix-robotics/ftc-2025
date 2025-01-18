@@ -15,8 +15,12 @@ public class Drivetrain extends Subsystem {
         configureOtos();
     }
 
+    public boolean turnTo (double theta) {
+        
+    }
+
     // returns whether it was successfully able to move to its desired position
-    public boolean goTo (double x, double y) {
+    public boolean driveTo (double x, double y) {
 
         SparkFunOTOS.Pose2D pos = otis.getPosition();
         double current_x = pos.x;
