@@ -4,4 +4,7 @@ public final class Constants {
     public final class Drivetrain {
         public static double power = 1.0;
     }
+    public init () {
+        // configure otos
+    }
 }
