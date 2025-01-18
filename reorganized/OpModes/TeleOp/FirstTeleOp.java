@@ -19,6 +19,8 @@ public class FirstTeleOp extends LinearOpMode {
         drivetrain.rightDriveFront = hardwareMap.get(DcMotor.class, "rightDriveFront");
         drivetrain.leftDriveRear  = hardwareMap.get(DcMotor.class, "leftDriveRear");
         drivetrain.rightDriveRear = hardwareMap.get(DcMotor.class, "rightDriveRear");
+        
+        drivetrain.init();
 
         waitForStart();
 
