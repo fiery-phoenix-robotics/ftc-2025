@@ -1,5 +1,6 @@
+package org.firstinspires.ftc.teamcode;
+
 public class Subsystem {
-    public static Subsystem instance;
     public Subsystem () {
         
     }
