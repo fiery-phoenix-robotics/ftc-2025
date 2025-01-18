@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
+import org.firstinspires.ftc.robotcore.external;
 
 import org.firstinspires.ftc.teamcode.FieryMath;
 
@@ -38,20 +39,27 @@ public class Drivetrain extends Subsystem {
         configureOtos();
 
     }
+    
+    public void updateTelemetry () {
+        SparkFunOTOS.Pose2D pos = otis.getPosition();
+        telemetry.addData("X Position", pos.x);
+        telemetry.addData("Y Position", pos.y);
+        telemetry.addData("Heading", pos.h);
+    }
 
     public class TeleOp {
-        public void doMotion (double c_y, double c_x, double c_rx) {
+        public void doMotion (double cy, double cx, double crx) {
                 
             leftDriveFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             rightDriveFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             leftDriveRear.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             rightDriveRear.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             
-            double denominator = Math.max(Math.abs(c_y) + Math.abs(c_x) + Math.abs(c_rx), 1);
-            double frontLeftPower = (c_y + c_x + c_rx) / denominator;
-            double backLeftPower = (c_y - c_x + c_rx) / denominator;
-            double frontRightPower = (c_y - c_x - c_rx) / denominator;
-            double backRightPower = (c_y + c_x - c_rx) / denominator;
+            double denominator = Math.max(Math.abs(cy) + Math.abs(cx) + Math.abs(crx), 1);
+            double frontLeftPower = (cy + cx + crx) / denominator;
+            double backLeftPower = (cy - cx + crx) / denominator;
+            double frontRightPower = (cy - cx - crx) / denominator;
+            double backRightPower = (cy + cx - crx) / denominator;
             
             leftDriveFront.setPower(frontLeftPower);
             leftDriveRear.setPower(backLeftPower);
