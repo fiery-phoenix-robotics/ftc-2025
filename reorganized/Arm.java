@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 public class Arm extends Subsystem {
     public Arm () {
-
+        
     }
     public init () {
         // stop and reset encoders
