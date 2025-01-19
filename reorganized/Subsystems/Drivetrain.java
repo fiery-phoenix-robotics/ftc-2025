@@ -54,7 +54,7 @@ public class Drivetrain extends Subsystem {
         power = p;
     }
     
-    public void updateTelemetry () {
+    public void updateTelemetry (Telemetry telemetry) {
         SparkFunOTOS.Pose2D pos = otis.getPosition();
         telemetry.addData("X Position", pos.x);
         telemetry.addData("Y Position", pos.y);
@@ -83,8 +83,7 @@ public class Drivetrain extends Subsystem {
     }
 
     public class Autonomous {
-        // returns whether it was successfully able to move to its desired position
-        public boolean driveTo (double x, double y) {
+        public void driveTo (double x, double y) {
 
             SparkFunOTOS.Pose2D pos = otis.getPosition();
             double current_x = pos.x;
@@ -135,7 +134,7 @@ public class Drivetrain extends Subsystem {
                 rightDriveRear.setPower(0);
             }
         }
-        public boolean turnTo (double theta) {
+        public void turnTo (double theta) {
             leftDriveFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             rightDriveFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             leftDriveRear.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);

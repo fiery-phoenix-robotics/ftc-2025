@@ -26,7 +26,7 @@ public class FirstTeleOp extends LinearOpMode {
 
         while (opModeIsActive()) {
             drivetrain.TeleOp.doMotion(-gamepad2.left_stick_y, gamepad2.left_stick_x, gamepad2.right_stick_x);
-            drivetrain.updateTelemetry();
+            drivetrain.updateTelemetry(telemetry);
             telemetry.update();
         }
 
