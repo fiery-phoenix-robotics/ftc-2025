@@ -6,6 +6,11 @@ public class PIDController {
 
     public ElapsedTime timer = new ElapsedTime();
 
+    public ElapsedTime stallTimer = new ElapsedTime();
+
+    // maximum time that the motor can stall before the power should be cut
+    private double stallingTimeout = 1.0;
+
     private double kP, kI, kD;
 
     private double maxIntegral; 
@@ -20,6 +25,7 @@ public class PIDController {
     }
 
     public double get (double target, double initial) {
+        double ret = 0;
         double error = target - initial;
         double derivative = (error - lastError) / timer.seconds();
         integral += error * timer.seconds();
@@ -30,12 +36,19 @@ public class PIDController {
         if (lastTarget != target)
             integral = 0;
 
+        // if the robot is moving or 
+        if (derivative > 0.0 || stallTimer.seconds() < stallingTimeout)
+            ret = kP * error + kI * integral + kD * derivative;
+
+        if (derivative > 0.0)
+            stallTimer.reset();
+
         lastError = error;
         lastTarget = target;
 
         timer.reset();
-
-        return kP * error + kI * integral + kD * derivative;
+        
+        return ret;
     }
 
 }
