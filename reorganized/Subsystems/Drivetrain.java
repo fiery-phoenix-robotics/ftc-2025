@@ -15,6 +15,10 @@ public class Drivetrain extends Subsystem {
 
     private static Drivetrain instance = null;
 
+    private PIDController xController, yController; //, hController
+
+    public double power;
+
     public Drivetrain () {
         
     }
@@ -38,6 +42,16 @@ public class Drivetrain extends Subsystem {
 
         configureOtos();
 
+        xController = new PIDController(0, 0, 0);
+        yController = new PIDController(0, 0, 0);
+        //hController = new PIDController(0, 0, 0);
+
+        drivetrain.setPower(1.0);
+
+    }
+
+    public void setPower(double p) {
+        power = p;
     }
     
     public void updateTelemetry () {
@@ -76,9 +90,8 @@ public class Drivetrain extends Subsystem {
             double current_x = pos.x;
             double current_y = pos.y;
             
-            double delta_x = x - current_x;
-            double delta_y = y - current_y;
-
+            double x_controlled = xController.get(x, current_x);
+            double y_controlled = yController.get(y, current_y);
                 
             if (opModeIsActive()) {
                 leftDriveFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -95,12 +108,11 @@ public class Drivetrain extends Subsystem {
                     pos = otis.getPosition();
                     current_x = pos.x;
                     current_y = pos.y;
+                    x_controlled = xController.get(x, current_x);
+                    y_controlled = yController.get(y, current_y);
 
-                    delta_x = x - current_x;
-                    delta_y = y - current_y;
-
-                    double northeast = delta_y + delta_x;
-                    double northwest = delta_y - delta_x;
+                    double northeast = y_controlled + x_controlled;
+                    double northwest = y_controlled - x_controlled;
 
                     if (Math.abs(northeast) > Math.abs(northwest)) {
                         northeastPower = northeast * (power / Math.abs(northeast));
