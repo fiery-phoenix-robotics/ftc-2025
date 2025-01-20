@@ -44,7 +44,7 @@ public class Drivetrain extends Subsystem {
 
         xController = new PIDController(0, 0, 0);
         yController = new PIDController(0, 0, 0);
-        //hController = new PIDController(0, 0, 0);
+        hController = new AngularPIDController(0, 0, 0);
 
         drivetrain.setPower(1.0);
 
@@ -149,15 +149,10 @@ public class Drivetrain extends Subsystem {
                 pos = otis.getPosition();
                 current_h = pos.h;
 
-                double delta_h = -(current_h - theta);
+                double h_controlled = hController.get(theta, current_h);
 
-                // accomodate for negative and positive angles with abs. val. greater than 180
-                if (Math.abs(delta_h) > 180) {
-                    delta_h = Math.signum(delta_h) * (Math.abs(delta_h) - 180);
-                }
-
-                leftPower = delta_h / 180;
-                rightPower = -delta_h / 180;
+                leftPower = power * h_controlled / 180;
+                rightPower = power * -h_controlled / 180;
 
                 leftDriveFront.setPower(leftPower);
                 rightDriveFront.setPower(rightPower);

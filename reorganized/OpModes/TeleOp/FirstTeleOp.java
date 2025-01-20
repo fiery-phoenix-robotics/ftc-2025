@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
 
-@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name="FirstTeleOp", group="Development")
+@TeleOp(name="FirstTeleOp", group="Development")
 public class FirstTeleOp extends LinearOpMode {
     
     public Drivetrain drivetrain = new Drivetrain();
