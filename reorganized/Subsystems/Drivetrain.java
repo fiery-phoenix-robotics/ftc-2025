@@ -11,7 +11,7 @@ public class Drivetrain extends Subsystem {
     
     public DcMotor leftDriveFront, rightDriveFront, leftDriveRear, rightDriveRear;
 
-    private SparkFunOTOS otis;
+    public SparkFunOTOS otis;
 
     private static Drivetrain instance = null;
 
