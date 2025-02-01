@@ -16,6 +16,10 @@ public class FirstTeleOp extends OpMode {
     @Override
     public void init () {
 
+        gamepad1.setJoystickDeadzone(Constants.Gamepad1.joystickDeadzone);
+        gamepad2.setJoystickDeadzone(Constants.Gamepad2.joystickDeadzone);
+
+
         drivetrain.leftDriveFront  = hardwareMap.get(DcMotor.class, "leftDriveFront");
         drivetrain.rightDriveFront = hardwareMap.get(DcMotor.class, "rightDriveFront");
         drivetrain.leftDriveRear  = hardwareMap.get(DcMotor.class, "leftDriveRear");
