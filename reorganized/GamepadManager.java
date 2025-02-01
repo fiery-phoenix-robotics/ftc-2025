@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.GamepadManager;
 
 public class GamepadManager {
     private Gamepad gamepad;
