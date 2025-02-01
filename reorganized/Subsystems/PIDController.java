@@ -1,6 +1,7 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.Subsystems;
 
 import com.qualcomm.robotcore.util.ElapsedTime;
+import org.firstinspires.ftc.teamcode.FieryMath;
 
 public class PIDController {
 
@@ -24,9 +25,13 @@ public class PIDController {
         maxIntegral = kI * 0.25;
     }
 
+    public double calculateError(double t, double i) {
+        return t - i;
+    }
+
     public double get (double target, double initial) {
         double ret = 0;
-        double error = target - initial;
+        double error = calculateError(target, initial);
         double derivative = (error - lastError) / timer.seconds();
         integral += error * timer.seconds();
 

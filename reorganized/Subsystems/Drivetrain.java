@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.Subsystems;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -6,6 +6,7 @@ import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
 import org.firstinspires.ftc.robotcore.external;
 
 import org.firstinspires.ftc.teamcode.FieryMath;
+import org.firstinspires.ftc.teamcode.Constants.Constants;
 
 public class Drivetrain extends Subsystem {
     
@@ -15,7 +16,9 @@ public class Drivetrain extends Subsystem {
 
     private static Drivetrain instance = null;
 
-    private PIDController xController, yController; //, hController
+
+    public static final PIDController xController, yController;
+    public static final AngularPIDController hController;
 
     public double power;
 
@@ -42,9 +45,9 @@ public class Drivetrain extends Subsystem {
 
         configureOtos();
 
-        xController = new PIDController(0, 0, 0);
-        yController = new PIDController(0, 0, 0);
-        hController = new AngularPIDController(0, 0, 0);
+        xController = new PIDController(Constants.Drivetrain.kPx, Constants.Drivetrain.kIx, Constants.Drivetrain.kDx);
+        yController = new PIDController(Constants.Drivetrain.kPy, Constants.Drivetrain.kIy, Constants.Drivetrain.kDy);
+        hController = new AngularPIDController(Constants.Drivetrain.kPh, Constants.Drivetrain.kIh, Constants.Drivetrain.kDh);
 
         drivetrain.setPower(1.0);
 
