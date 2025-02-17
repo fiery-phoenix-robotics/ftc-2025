@@ -1,9 +1,10 @@
 package org.firstinspires.ftc.teamcode.Subsystems;
 
-import com.qualcomm.robotcore.util.ElapsedTime;
-import org.firstinspires.ftc.teamcode.FieryMath;
+import org.firstinspires.ftc.lib.Geometry;
 
-public class AngularPIDController {
+import com.qualcomm.robotcore.util.ElapsedTime;
+
+public class AngularPIDController extends PIDController {
 
     public AngularPIDController (double p, double i, double d) {
         super(p, i, d);
@@ -11,7 +12,7 @@ public class AngularPIDController {
 
     @Override
     public double calculateError(double t, double i) {
-        return FieryMath.angleDifference(i, t);
+        return Geometry.angleDifference(i, t);
     }
 
 }

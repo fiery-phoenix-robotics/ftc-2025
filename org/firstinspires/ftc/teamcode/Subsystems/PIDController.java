@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.Subsystems;
 
 import com.qualcomm.robotcore.util.ElapsedTime;
-import org.firstinspires.ftc.teamcode.FieryMath;
+import org.firstinspires.ftc.lib.Arithmetic;
 
 public class PIDController {
 
@@ -35,7 +35,7 @@ public class PIDController {
         double derivative = (error - lastError) / timer.seconds();
         integral += error * timer.seconds();
 
-        if (!FieryMath.withinRange(integral, -maxIntegral, maxIntegral))
+        if (!Arithmetic.withinRange(integral, -maxIntegral, maxIntegral))
             integral = Math.signum(integral) * maxIntegral;
 
         if (lastTarget != target)

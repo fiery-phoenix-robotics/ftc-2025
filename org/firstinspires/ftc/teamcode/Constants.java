@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Constants;
+package org.firstinspires.ftc.teamcode;
 
 public final class Constants {
 
