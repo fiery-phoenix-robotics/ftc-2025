@@ -65,7 +65,7 @@ public class Drivetrain extends Subsystem {
     }
 
     public class TeleOp {
-        public void doMotion (double cy, double cx, double crx) {
+        public void drive (double cy, double cx, double crx) {
                 
             leftDriveFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             rightDriveFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);

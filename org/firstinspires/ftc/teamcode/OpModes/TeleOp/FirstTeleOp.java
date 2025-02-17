@@ -14,7 +14,7 @@ import org.firstinspires.ftc.teamcode.Subsystems.*;
 public class FirstTeleOp extends OpMode {
     
     public Drivetrain drivetrain = new Drivetrain();
-    
+
     @Override
     public void init () {
 
@@ -45,7 +45,7 @@ public class FirstTeleOp extends OpMode {
     @Override
     public void loop () {
 
-        drivetrain.TeleOp.doMotion(-gamepad2.left_stick_y, gamepad2.left_stick_x, gamepad2.right_stick_x);
+        drivetrain.TeleOp.drive(-gamepad2.left_stick_y, gamepad2.left_stick_x, gamepad2.right_stick_x);
         drivetrain.updateTelemetry(telemetry);
 
         telemetry.update();
