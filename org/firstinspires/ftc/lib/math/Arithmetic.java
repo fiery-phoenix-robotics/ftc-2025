@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.lib;
+package org.firstinspires.ftc.lib.math;
 
 public class Arithmetic {
     public static boolean withinRange (double num, double min, double max) {
