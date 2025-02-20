@@ -4,7 +4,10 @@ public enum Unit {
 
     CENTIMETERS (Dimension.LENGTH, 1),
     INCHES (Dimension.LENGTH, 2.54),
-    TILES (Dimension.LENGTH, 60.96);
+    TILES (Dimension.LENGTH, 60.96),
+    
+    RADIANS (Dimension.ANGLE, 1),
+    DEGREES (Dimension.ANGLE, Math.PI/180);
 
     public Dimension dimension;
     public double toDefaultUnit;
@@ -15,7 +18,8 @@ public enum Unit {
     }
 
     public enum Dimension {
-        LENGTH
+        LENGTH,
+        ANGLE
     }
     
     public double to (Unit u2, double val) throws UnitMismatchException {
