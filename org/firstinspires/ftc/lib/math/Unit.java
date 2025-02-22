@@ -22,12 +22,12 @@ public enum Unit {
         ANGLE
     }
     
-    public double to (Unit u2, double val) throws UnitMismatchException {
+    public double to (Unit u2, double val) {
         if (dimension == u2.dimension) {
             return (val * toDefaultUnit) / u2.toDefaultUnit;
         }
         else {
-            throw new UnitMismatchException("Inputs are of different dimensions (" + dimension.name() + "," + u2.dimension.name() + ")");
+            throw new IllegalArgumentException("Arguments are of different dimensions (" + dimension.name() + "," + u2.dimension.name() + ")");
         }
     }
 }

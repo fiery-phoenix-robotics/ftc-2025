@@ -97,50 +97,55 @@ public class Drivetrain extends Subsystem {
             
             double x_controlled = xController.get(x, current_x);
             double y_controlled = yController.get(y, current_y);
-                
-            if (opModeIsActive()) {
-                leftDriveFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                rightDriveFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                leftDriveRear.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                rightDriveRear.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            
+            leftDriveFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            rightDriveFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            leftDriveRear.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            rightDriveRear.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-                double northeastPower; // power of northeastwardly-moving motors (front right and back left)
-                double northwestPower; // power of northwestwardly-moving motors (front left and back right)
-                double e = 4.0; // acceptable error
+            double northeastPower; // power of northeastwardly-moving motors (front right and back left)
+            double northwestPower; // power of northwestwardly-moving motors (front left and back right)
+            double e = 4.0; // acceptable error
 
-                // responsively adjust position 
-                while (opModeIsActive() && !(Arithmetic.withinRange(pos.x, x - e, x + e) && Arithemtic.withinRange(pos.y, y - e, y + e))) {
-                    pos = otis.getPosition();
-                    current_x = pos.x;
-                    current_y = pos.y;
-                    x_controlled = xController.get(x, current_x);
-                    y_controlled = yController.get(y, current_y);
+            // responsively adjust position 
+            if (!(Arithmetic.withinRange(pos.x, x - e, x + e) && Arithmetic.withinRange(pos.y, y - e, y + e))) {
+                pos = otis.getPosition();
+                current_x = pos.x;
+                current_y = pos.y;
+                x_controlled = xController.get(x, current_x);
+                y_controlled = yController.get(y, current_y);
 
-                    double northeast = y_controlled + x_controlled;
-                    double northwest = y_controlled - x_controlled;
+                double northeast = y_controlled + x_controlled;
+                double northwest = y_controlled - x_controlled;
 
-                    if (Math.abs(northeast) > Math.abs(northwest)) {
-                        northeastPower = northeast * (power / Math.abs(northeast));
-                        northwestPower = northwest * (power / Math.abs(northeast));
-                    } else {
-                        northeastPower = northwest * (power / Math.abs(northwest));
-                        northwestPower = northeast * (power / Math.abs(northwest));
-                    }
-
-                    leftDriveFront.setPower(northwestPower);
-                    rightDriveFront.setPower(northeastPower);
-                    leftDriveRear.setPower(northeastPower);
-                    rightDriveRear.setPower(northwestPower);
+                if (Math.abs(northeast) > Math.abs(northwest)) {
+                    northeastPower = northeast * (power / Math.abs(northeast));
+                    northwestPower = northwest * (power / Math.abs(northeast));
+                } else {
+                    northeastPower = northwest * (power / Math.abs(northwest));
+                    northwestPower = northeast * (power / Math.abs(northwest));
                 }
 
-                // set motor power back to 0
-                leftDriveFront.setPower(0);
-                rightDriveFront.setPower(0);
-                leftDriveRear.setPower(0);
-                rightDriveRear.setPower(0);
+                leftDriveFront.setPower(northwestPower);
+                rightDriveFront.setPower(northeastPower);
+                leftDriveRear.setPower(northeastPower);
+                rightDriveRear.setPower(northwestPower);
             }
+
+            // set motor power back to 0
+            leftDriveFront.setPower(0);
+            rightDriveFront.setPower(0);
+            leftDriveRear.setPower(0);
+            rightDriveRear.setPower(0);
+
         }
         public void turnTo (double theta) {
+
+            SparkFunOTOS.Pose2D pos = otis.getPosition();
+            double current_h = pos.h;
+            
+            double h_controlled = hController.get(theta, current_h);
+
             leftDriveFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             rightDriveFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             leftDriveRear.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -151,7 +156,7 @@ public class Drivetrain extends Subsystem {
             double e = 4.0; // acceptable error
 
             // responsively adjust position 
-            while (opModeIsActive() && !Arithmetic.withinRange(pos.h, h - e, h + e)) {
+            if (!Arithmetic.withinRange(pos.h, theta - e, theta + e)) {
                 pos = otis.getPosition();
                 current_h = pos.h;
 
@@ -171,6 +176,7 @@ public class Drivetrain extends Subsystem {
             rightDriveFront.setPower(0);
             leftDriveRear.setPower(0);
             rightDriveRear.setPower(0);
+            
         }
         private void configureOtos() {
 
