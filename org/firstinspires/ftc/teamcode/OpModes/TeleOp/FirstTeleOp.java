@@ -10,9 +10,9 @@ import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
 
 import org.firstinspires.ftc.teamcode.Subsystems.*;
 
-@TeleOp(name="FirstTeleOp", group="Development")
+@TeleOp(name = "FirstTeleOp", group = "Development")
 public class FirstTeleOp extends OpMode {
-    
+
     public Drivetrain drivetrain = new Drivetrain();
 
     @Override
@@ -21,10 +21,9 @@ public class FirstTeleOp extends OpMode {
         gamepad1.setJoystickDeadzone(Constants.Gamepad1.joystickDeadzone);
         gamepad2.setJoystickDeadzone(Constants.Gamepad2.joystickDeadzone);
 
-
-        drivetrain.leftDriveFront  = hardwareMap.get(DcMotor.class, "leftDriveFront");
+        drivetrain.leftDriveFront = hardwareMap.get(DcMotor.class, "leftDriveFront");
         drivetrain.rightDriveFront = hardwareMap.get(DcMotor.class, "rightDriveFront");
-        drivetrain.leftDriveRear  = hardwareMap.get(DcMotor.class, "leftDriveRear");
+        drivetrain.leftDriveRear = hardwareMap.get(DcMotor.class, "leftDriveRear");
         drivetrain.rightDriveRear = hardwareMap.get(DcMotor.class, "rightDriveRear");
         drivetrain.otis = hardwareMap.get(SparkFunOTOS.class, "otis");
 
@@ -39,7 +38,7 @@ public class FirstTeleOp extends OpMode {
 
     @Override
     public void start () {
-        
+
     }
 
     @Override
@@ -54,7 +53,7 @@ public class FirstTeleOp extends OpMode {
 
     @Override
     public void stop () {
-        
+
     }
 
 }

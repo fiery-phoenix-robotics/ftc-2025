@@ -19,7 +19,6 @@ public class Drivetrain extends Subsystem {
 
     private static Drivetrain instance = null;
 
-
     public static final PIDController xController, yController;
     public static final AngularPIDController hController;
 
@@ -200,4 +199,5 @@ public class Drivetrain extends Subsystem {
             instance = new Drivetrain();
         return instance;
     }
+
 }

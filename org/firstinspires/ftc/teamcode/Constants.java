@@ -3,13 +3,13 @@ package org.firstinspires.ftc.teamcode;
 public final class Constants {
 
     public static final class Gamepad1 {
-        
+
         public double joystickDeadzone = 0.10;
 
     }
 
     public static final class Gamepad2 {
-        
+
         public double joystickDeadzone = 0.10;
 
     }
@@ -29,5 +29,5 @@ public final class Constants {
         public static final double kDh = 0;
 
     }
-    
+
 }
