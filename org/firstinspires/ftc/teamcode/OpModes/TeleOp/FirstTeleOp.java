@@ -10,6 +10,8 @@ import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
 
 import org.firstinspires.ftc.teamcode.Subsystems.*;
 
+import org.firstinspires.ftc.lib.geometry.*;
+
 @TeleOp(name = "FirstTeleOp", group = "Development")
 public class FirstTeleOp extends OpMode {
 
@@ -44,7 +46,8 @@ public class FirstTeleOp extends OpMode {
     @Override
     public void loop () {
 
-        drivetrain.TeleOp.drive(-gamepad2.left_stick_y, gamepad2.left_stick_x, gamepad2.right_stick_x);
+        Trajectory t = new Trajectory(-gamepad2.left_stick_y, gamepad2.left_stick_x, gamepad2.right_stick_x);
+        drivetrain.TeleOp.drive(t);
         drivetrain.updateTelemetry(telemetry);
 
         telemetry.update();

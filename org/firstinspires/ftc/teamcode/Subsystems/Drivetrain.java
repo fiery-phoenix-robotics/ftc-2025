@@ -11,6 +11,8 @@ import org.firstinspires.ftc.robotcore.external;
 
 import org.firstinspires.ftc.teamcode.Constants;
 
+import org.firstinspires.ftc.lib.geometry.*;
+
 public class Drivetrain extends Subsystem {
     
     public DcMotor leftDriveFront, rightDriveFront, leftDriveRear, rightDriveRear;
@@ -67,18 +69,22 @@ public class Drivetrain extends Subsystem {
     }
 
     public class TeleOp {
-        public void drive (double cy, double cx, double crx) {
+        public void drive (Trajectory t) {
+
+            double x = t.x;
+            double y = t.y;
+            double rz = t.rz;
                 
             leftDriveFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             rightDriveFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             leftDriveRear.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             rightDriveRear.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             
-            double denominator = Math.max(Math.abs(cy) + Math.abs(cx) + Math.abs(crx), 1);
-            double frontLeftPower = (cy + cx + crx) / denominator;
-            double backLeftPower = (cy - cx + crx) / denominator;
-            double frontRightPower = (cy - cx - crx) / denominator;
-            double backRightPower = (cy + cx - crx) / denominator;
+            double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rz), 1);
+            double frontLeftPower = (y + x + rz) / denominator;
+            double backLeftPower = (y - x + rz) / denominator;
+            double frontRightPower = (y - x - rz) / denominator;
+            double backRightPower = (y + x - rz) / denominator;
             
             leftDriveFront.setPower(frontLeftPower);
             leftDriveRear.setPower(backLeftPower);
