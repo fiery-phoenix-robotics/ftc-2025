@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.lib.math;
+package org.firstinspires.ftc.lib.geometry;
 
 public class Geometry {
     public static double angleDifference (double a, double b) {

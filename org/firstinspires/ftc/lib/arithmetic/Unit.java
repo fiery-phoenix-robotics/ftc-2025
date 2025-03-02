@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.lib.math; 
+package org.firstinspires.ftc.lib.arithmetic; 
 
 public enum Unit {
 

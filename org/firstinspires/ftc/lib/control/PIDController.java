@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.lib.control;
 
-import org.firstinspires.ftc.lib.math.Arithmetic;
+import org.firstinspires.ftc.lib.arithmetic.Arithmetic;
 
 import com.qualcomm.robotcore.util.ElapsedTime;
 

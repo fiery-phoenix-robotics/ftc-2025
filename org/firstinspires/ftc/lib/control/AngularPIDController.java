@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.lib.control;
 
-import org.firstinspires.ftc.lib.math.Geometry;
+import org.firstinspires.ftc.lib.geometry.Geometry;
 
 import com.qualcomm.robotcore.util.ElapsedTime;
 

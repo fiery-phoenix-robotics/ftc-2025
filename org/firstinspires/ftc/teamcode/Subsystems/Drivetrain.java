@@ -4,9 +4,9 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
 
+import org.firstinspires.ftc.lib.arithmetic.Arithmetic;
 import org.firstinspires.ftc.lib.control.AngularPIDController;
 import org.firstinspires.ftc.lib.control.PIDController;
-import org.firstinspires.ftc.lib.math.Arithmetic;
 import org.firstinspires.ftc.robotcore.external;
 
 import org.firstinspires.ftc.teamcode.Constants;
@@ -84,7 +84,7 @@ public class Drivetrain extends Subsystem {
             leftDriveRear.setPower(backLeftPower);
             rightDriveFront.setPower(frontRightPower);
             rightDriveRear.setPower(backRightPower);
-        }        
+        }
     }
 
     public class Autonomous {
