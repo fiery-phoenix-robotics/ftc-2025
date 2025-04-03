@@ -42,7 +42,6 @@ public class PIDController {
         if (lastTarget != target)
             integral = 0;
 
-        // if the robot is moving or 
         if (derivative > 0.0 || stallTimer.seconds() < stallingTimeout)
             ret = kP * error + kI * integral + kD * derivative;
 
