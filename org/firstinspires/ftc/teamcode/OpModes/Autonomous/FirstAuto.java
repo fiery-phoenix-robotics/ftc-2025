@@ -1,8 +1,9 @@
 package org.firstinspires.ftc.teamcode;
 
+import java.util.Map;
+
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import java.util.Map;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.CRServo;
@@ -18,11 +19,7 @@ public class FirstAuto extends OpMode {
     @Override
     public void init () {
 
-        drivetrain.leftDriveFront = hardwareMap.get(DcMotor.class, "leftDriveFront");
-        drivetrain.rightDriveFront = hardwareMap.get(DcMotor.class, "rightDriveFront");
-        drivetrain.leftDriveRear = hardwareMap.get(DcMotor.class, "leftDriveRear");
-        drivetrain.rightDriveRear = hardwareMap.get(DcMotor.class, "rightDriveRear");
-        drivetrain.otis = hardwareMap.get(SparkFunOTOS.class, "otis");
+        Subsystem.hardwareMap = hardwareMap;
 
         drivetrain.init();
 
@@ -41,8 +38,8 @@ public class FirstAuto extends OpMode {
     @Override
     public void loop () {
 
-        Trajectory t = new Trajectory(-gamepad2.left_stick_y, gamepad2.left_stick_x, gamepad2.right_stick_x);
-        drivetrain.TeleOp.drive(t);
+        drivetrain.loop();
+
         drivetrain.updateTelemetry(telemetry);
 
         telemetry.update();
@@ -53,3 +50,5 @@ public class FirstAuto extends OpMode {
     public void stop () {
 
     }
+
+}

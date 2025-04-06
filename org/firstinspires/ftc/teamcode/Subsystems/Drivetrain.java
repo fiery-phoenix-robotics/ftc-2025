@@ -1,37 +1,39 @@
 package org.firstinspires.ftc.teamcode.Subsystems;
 
+import org.firstinspires.ftc.lib.geometry.Trajectory2d;
+import org.firstinspires.ftc.teamcode.Constants;
+import org.firstinspires.ftc.lib.control.PIDController;
+import org.firstinspires.ftc.lib.geometry.Pose2d;
+
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
 
-import org.firstinspires.ftc.lib.arithmetic.Arithmetic;
-import org.firstinspires.ftc.lib.control.AngularPIDController;
-import org.firstinspires.ftc.lib.control.PIDController;
-import org.firstinspires.ftc.robotcore.external;
-
-import org.firstinspires.ftc.teamcode.Constants;
-
-import org.firstinspires.ftc.lib.geometry.*;
-
 public class Drivetrain extends Subsystem {
+
+    private static Drivetrain instance;
     
-    public DcMotor leftDriveFront, rightDriveFront, leftDriveRear, rightDriveRear;
+    private DcMotor leftDriveFront, rightDriveFront, leftDriveRear, rightDriveRear;
+    private PIDController leftFrontController, rightFrontController, leftRearController, rightRearController;
 
-    public SparkFunOTOS otis;
+    private SparkFunOTOS otis;
 
-    private static Drivetrain instance = null;
+    private Pose2d pose;
 
-    public static final PIDController xController, yController;
-    public static final AngularPIDController hController;
+    public Vision vision;
 
-    public double power;
+    private Drivetrain () {
 
-    public Drivetrain () {
-        
     }
 
     public void init () {
-        
+
+        drivetrain.leftDriveFront = hardwareMap.get(DcMotor.class, "leftDriveFront");
+        drivetrain.rightDriveFront = hardwareMap.get(DcMotor.class, "rightDriveFront");
+        drivetrain.leftDriveRear = hardwareMap.get(DcMotor.class, "leftDriveRear");
+        drivetrain.rightDriveRear = hardwareMap.get(DcMotor.class, "rightDriveRear");
+        drivetrain.otis = hardwareMap.get(SparkFunOTOS.class, "otis");
+
         leftDriveFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightDriveFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         leftDriveRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -47,150 +49,82 @@ public class Drivetrain extends Subsystem {
         leftDriveRear.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         rightDriveRear.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
-        configureOtos();
+        leftFrontController = new PIDController(Constants.Drivetrain.LeftFront.kP, Constants.Drivetrain.LeftFront.kI, Constants.Drivetrain.LeftFront.kD);
+        rightFrontController = new PIDController(Constants.Drivetrain.RightFront.kP, Constants.Drivetrain.RightFront.kI, Constants.Drivetrain.RightFront.kD);
+        leftRearController = new PIDController(Constants.Drivetrain.LeftRear.kP, Constants.Drivetrain.LeftRear.kI, Constants.Drivetrain.LeftRear.kD);
+        rightRearController = new PIDController(Constants.Drivetrain.RightRear.kP, Constants.Drivetrain.RightRear.kI, Constants.Drivetrain.RightRear.kD);
 
-        xController = new PIDController(Constants.Drivetrain.kPx, Constants.Drivetrain.kIx, Constants.Drivetrain.kDx);
-        yController = new PIDController(Constants.Drivetrain.kPy, Constants.Drivetrain.kIy, Constants.Drivetrain.kDy);
-        hController = new AngularPIDController(Constants.Drivetrain.kPh, Constants.Drivetrain.kIh, Constants.Drivetrain.kDh);
+        this.configureOtos();
 
-        drivetrain.setPower(1.0);
+        vision = Vision.getInstance();
+        pose = vision.findPose();
 
     }
 
-    public void setPower(double p) {
-        power = p;
-    }
-    
-    public void updateTelemetry (Telemetry telemetry) {
-        SparkFunOTOS.Pose2D pos = otis.getPosition();
-        telemetry.addData("X Position", pos.x);
-        telemetry.addData("Y Position", pos.y);
-        telemetry.addData("Heading", pos.h);
-    }
-
-    public void drive (Trajectory t) {  
+    public void loop () {
 
         SparkFunOTOS.Pose2D pos = otis.getPosition();
-        double current_x = pos.x;
-        double current_y = pos.y;
-        double current_rz = pos.h;
+        pose = new Pose2d(pose.getX() + pos.x, pose.getY + pos.y, pose.getHeading() + pos.h);
 
-        double x = current_x + t.x;
-        double y = current_y + t.y;
-        double rz = current_rz + t.rz;
-        
-        double x_controlled = xController.get(x, current_x);
-        double y_controlled = yController.get(y, current_y);
-        double h_controlled = hController.get(rz, current_rz);
+    }
+
+    public void drive (Trajectory2d t) {
+
+        double x = t.getX();
+        double y = t.getY();
+        double h = t.getRZ();
+
+        double frontLeftSpeed = (y + x + h) * Constants.Drivetrain.maxSpeeed;
+        double backLeftSpeed = (y - x + h) * Constants.Drivetrain.maxSpeeed;
+        double frontRightSpeed = (y - x - h) * Constants.Drivetrain.maxSpeeed;
+        double backRightSpeed = (y + x - h) * Constants.Drivetrain.maxSpeeed;
 
         leftDriveFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         rightDriveFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         leftDriveRear.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         rightDriveRear.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        
-        double denominator = Math.max(Math.abs(y_controlled) + Math.abs(x_controlled) + Math.abs(h_controlled), 1);
-        double frontLeftPower = (y_controlled + x_controlled + h_controlled) / denominator;
-        double backLeftPower = (y_controlled - x_controlled + h_controlled) / denominator;
-        double frontRightPower = (y - x_controlled - h_controlled) / denominator;
-        double backRightPower = (y + x_controlled - h_controlled) / denominator;
+
+        double frontLeftPower = leftFrontController.get(frontLeftSpeed, 0);
+        double backLeftPower = leftRearController.get(backLeftSpeed, 0);
+        double frontRightPower = rightFrontController.get(frontRightSpeed, 0);
+        double backRightPower = rightRearController.get(backRightSpeed, 0);
         
         leftDriveFront.setPower(frontLeftPower);
         leftDriveRear.setPower(backLeftPower);
         rightDriveFront.setPower(frontRightPower);
         rightDriveRear.setPower(backRightPower);
+
+        telemetry.addData("Front Left Power", frontLeftPower);
+        telemetry.addData("Rear Left Power", backLeftPower);
+        telemetry.addData("Front Right Power", frontRightPower);
+        telemetry.addData("Rear Right Power", backRightPower);
+
     }
 
+    private void configureOtos () {
 
-        public void goto (double x, double y, double rz) {
+        otis.setLinearUnit(DistanceUnit.INCH);
+        otis.setAngularUnit(AngleUnit.DEGREES);
+        // define how far the sensor is offset from the tracking point of the robot
+        SparkFunOTOS.Pose2D offset = new SparkFunOTOS.Pose2D(0, 0, 0);
+        otis.setOffset(offset);
+        otis.setLinearScalar(1.0);
+        otis.setAngularScalar(1.0);
+        otis.calibrateImu();
+        otis.resetTracking();
+        SparkFunOTOS.Pose2D currentPosition = new SparkFunOTOS.Pose2D(0, 0, 0);
+        otis.setPosition(currentPosition);
 
-            SparkFunOTOS.Pose2D pos = otis.getPosition();
-
-            double tx = x - pos.x;
-            double ty = y - pos.y;
-            double trz = Geometry.angleDifference(pos.h, rz);
-
-            Trajectory t = new Trajectory(tx, ty, trz);
-            
-            leftDriveFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            rightDriveFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            leftDriveRear.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            rightDriveRear.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-            double northeastPower; // power of northeastwardly-moving motors (front right and back left)
-            double northwestPower; // power of northwestwardly-moving motors (front left and back right)
-            double e = 4.0; // acceptable error
-
-            // responsively adjust position 
-            if (!(Arithmetic.withinRange(pos.x, x - e, x + e) && Arithmetic.withinRange(pos.y, y - e, y + e) && Arithmetic.withinRange(pos.h, rz - e, rz + e))) {
-                drive(t);
-            }
-
-            // set motor power back to 0
-            leftDriveFront.setPower(0);
-            rightDriveFront.setPower(0);
-            leftDriveRear.setPower(0);
-            rightDriveRear.setPower(0);
-
-        }
-        public void turnTo (double theta) {
-
-            SparkFunOTOS.Pose2D pos = otis.getPosition();
-            double current_h = pos.h;
-            
-            double h_controlled = hController.get(theta, current_h);
-
-            leftDriveFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            rightDriveFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            leftDriveRear.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            rightDriveRear.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-            double leftPower;
-            double rightPower;
-            double e = 4.0; // acceptable error
-
-            // responsively adjust position 
-            if (!Arithmetic.withinRange(pos.h, theta - e, theta + e)) {
-                pos = otis.getPosition();
-                current_h = pos.h;
-
-                double h_controlled = hController.get(theta, current_h);
-
-                leftPower = power * h_controlled / 180;
-                rightPower = power * -h_controlled / 180;
-
-                leftDriveFront.setPower(leftPower);
-                rightDriveFront.setPower(rightPower);
-                leftDriveRear.setPower(leftPower);
-                rightDriveRear.setPower(rightPower);
-            }
-
-            // set motor power back to 0
-            leftDriveFront.setPower(0);
-            rightDriveFront.setPower(0);
-            leftDriveRear.setPower(0);
-            rightDriveRear.setPower(0);
-            
-        }
-        private void configureOtos() {
-
-            otis.setLinearUnit(DistanceUnit.INCH);
-            otis.setAngularUnit(AngleUnit.DEGREES);
-            // define how far the sensor is offset from the tracking point of the robot
-            SparkFunOTOS.Pose2D offset = new SparkFunOTOS.Pose2D(0, 0, 0);
-            otis.setOffset(offset);
-            otis.setLinearScalar(1.0);
-            otis.setAngularScalar(1.0);
-            otis.calibrateImu();
-            otis.resetTracking();
-            SparkFunOTOS.Pose2D currentPosition = new SparkFunOTOS.Pose2D(0, 0, 0);
-            otis.setPosition(currentPosition);
-
-        }
+    }
 
     public static Drivetrain getInstance() {
-        if (instance == null)
+
+        if (instance == null) {
             instance = new Drivetrain();
+        }
+
         return instance;
+
     }
 
 }

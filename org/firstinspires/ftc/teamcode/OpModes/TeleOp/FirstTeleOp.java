@@ -8,6 +8,10 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
 
+
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+import com.qualcomm.robotcore.hardware.HardwareMap;
+
 import org.firstinspires.ftc.teamcode.Subsystems.*;
 
 import org.firstinspires.ftc.lib.geometry.*;
@@ -23,11 +27,8 @@ public class FirstTeleOp extends OpMode {
         gamepad1.setJoystickDeadzone(Constants.Gamepad1.joystickDeadzone);
         gamepad2.setJoystickDeadzone(Constants.Gamepad2.joystickDeadzone);
 
-        drivetrain.leftDriveFront = hardwareMap.get(DcMotor.class, "leftDriveFront");
-        drivetrain.rightDriveFront = hardwareMap.get(DcMotor.class, "rightDriveFront");
-        drivetrain.leftDriveRear = hardwareMap.get(DcMotor.class, "leftDriveRear");
-        drivetrain.rightDriveRear = hardwareMap.get(DcMotor.class, "rightDriveRear");
-        drivetrain.otis = hardwareMap.get(SparkFunOTOS.class, "otis");
+        Subsystem.hardwareMap = hardwareMap;
+        Subsystem.telemetry = telemetry;
 
         drivetrain.init();
 
@@ -46,9 +47,10 @@ public class FirstTeleOp extends OpMode {
     @Override
     public void loop () {
 
-        Trajectory t = new Trajectory(-gamepad2.left_stick_y, gamepad2.left_stick_x, gamepad2.right_stick_x);
-        drivetrain.TeleOp.drive(t);
-        drivetrain.updateTelemetry(telemetry);
+        drivetrain.loop();
+
+        Trajectory2d t = new Trajectory2d(-gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
+        drivetrain.drive(t);
 
         telemetry.update();
 
